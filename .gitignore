@@ -1,0 +1,45 @@
+# Директория с компилируемыми бинарниками
+/bin/
+/out/
+/build/
+
+# Файлы временных сборок
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Кешированные зависимости Go
+/pkg/
+*.a
+
+# Директория модуля Go (Go 1.11+)
+go.sum
+
+# Директория кеша Go
+$GOPATH/pkg/mod/
+$GOCACHE/
+
+# Файлы IDE и редакторов
+.vscode/
+.idea/
+*.iml
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# Docker-файлы
+docker-compose.override.yml
+.env
+
+# Конфигурационные файлы
+config/local.yaml
+config/*.local.yaml
+
+*.db
