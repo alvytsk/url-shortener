@@ -3,6 +3,7 @@ package service
 import (
 	"alvytsk/url-shortener/internal/storage"
 	"alvytsk/url-shortener/pkg/logger"
+	"context"
 	"crypto/sha1"
 	"encoding/base64"
 	"errors"
@@ -52,6 +53,17 @@ func (s *UrlService) CreateShortLink(originalURL string) (*storage.Url, error) {
 
 // GetOriginalLink возвращает оригинальную ссылку по коду
 func (s *UrlService) GetOriginalLink(shortCode string) (*storage.Url, error) {
+    log := logger.GetLogger()
+    ctx := context.Background()
+    redisClient := storage.GetRedis()
+
+    // Проверка в Redis
+	cachedURL, err := redisClient.Get(ctx, shortCode).Result()
+	if err == nil {
+		log.Info("Получено из Redis cache")
+		return &storage.Url{OriginalURL: cachedURL, ShortCode: shortCode}, nil
+	}
+    
     link := &storage.Url{}
     result := s.db.Where("short_code = ?", shortCode).First(link)
     if result.Error != nil {
