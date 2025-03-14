@@ -1,6 +1,7 @@
 package main
 
 import (
+	"alvytsk/url-shortener/internal/handlers"
 	"alvytsk/url-shortener/internal/storage"
 	"alvytsk/url-shortener/pkg/logger"
 
@@ -12,7 +13,7 @@ func main() {
 	log := logger.GetLogger();
 
 	// Подключаемся к базе данных
-    db := storage.GetDb()
+    db := storage.GetDB()
 
     // Проверим подключение простым запросом (опционально)
     sqlDB, err := db.DB()
@@ -34,6 +35,9 @@ func main() {
         log.Info("Запрос /ping")
         c.JSON(200, gin.H{"message": "pong"})
     })
+
+	router.POST("/shorten", handlers.CreateShortLinkHandler)
+	router.GET("/:code", handlers.RedirectHandler)
 
 	log.Info("Запускаем сервер на порту :8080")
     router.Run(":8080")

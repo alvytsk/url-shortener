@@ -13,7 +13,7 @@ var (
 	once sync.Once
 )
 
-func GetDb() *gorm.DB {
+func GetDB() *gorm.DB {
 	//Используем singleton (с помощью sync.Once)
 	once.Do(func() {
 		log := logger.GetLogger()
@@ -27,7 +27,7 @@ func GetDb() *gorm.DB {
 		log.Info("Подключение к базе данных установлено.")
 
 		//Выполняем миграции
-		if err := db.AutoMigrate(&Link{}); err != nil {
+		if err := db.AutoMigrate(&Url{}); err != nil {
 			log.Fatal("Ошибка выполнения миграции", err)
 		}
 
