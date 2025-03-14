@@ -1,0 +1,64 @@
+basePath: /
+definitions:
+  handlers.createLinkRequest:
+    properties:
+      url:
+        type: string
+    required:
+    - url
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для сокращения и редиректа ссылок.
+  title: Link Shortener API
+  version: "1.0"
+paths:
+  /{short_code}:
+    get:
+      description: Перенаправляет на оригинальную ссылку по сокращённому коду
+      parameters:
+      - description: Короткий код ссылки
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "301":
+          description: Moved Permanently
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Редирект на оригинальный URL
+  /shorten:
+    post:
+      consumes:
+      - application/json
+      description: Создаёт короткую ссылку из исходного URL
+      parameters:
+      - description: Исходный URL
+        in: body
+        name: url
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создание короткой ссылки
+swagger: "2.0"

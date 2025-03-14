@@ -19,7 +19,7 @@ func GetDB() *gorm.DB {
 		log := logger.GetLogger()
 
 		var err error
-		db, err = gorm.Open(sqlite.Open("url-shortener.db"), &gorm.Config{})
+		db, err = gorm.Open(sqlite.Open("./url-shortener.db"), &gorm.Config{})
 		if err != nil {
 			log.Fatal("Ошибка подключения к базе данных", err)
 		}

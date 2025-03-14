@@ -14,7 +14,15 @@ type createLinkRequest struct {
     URL string `json:"url" binding:"required"`
 }
 
-// CreateShortLinkHandler обработчик для сокращения ссылок
+// CreateShortLinkHandler godoc
+// @Summary Создание короткой ссылки
+// @Description Создаёт короткую ссылку из исходного URL
+// @Accept json
+// @Produce json
+// @Param url body createLinkRequest true "Исходный URL"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Router /shorten [post]
 func CreateShortLinkHandler(c *gin.Context) {
     log := logger.GetLogger()
     var req createLinkRequest
@@ -46,7 +54,13 @@ func CreateShortLinkHandler(c *gin.Context) {
     })
 }
 
-// RedirectHandler обработчик редиректа по сокращённой ссылке
+// RedirectHandler godoc
+// @Summary Редирект на оригинальный URL
+// @Description Перенаправляет на оригинальную ссылку по сокращённому коду
+// @Param code path string true "Короткий код ссылки"
+// @Success 301
+// @Failure 404 {object} map[string]string
+// @Router /{short_code} [get]
 func RedirectHandler(c *gin.Context) {
     log := logger.GetLogger()
     shortCode := c.Param("code")

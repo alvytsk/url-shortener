@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    container_name: link_shortener
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    volumes:
+      - ./links.db:/app/links.db
+    environment:
+      REDIS_ADDR: redis:6379
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
