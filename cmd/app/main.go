@@ -5,9 +5,18 @@ import (
 	"alvytsk/url-shortener/internal/storage"
 	"alvytsk/url-shortener/pkg/logger"
 
+	_ "alvytsk/url-shortener/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Link Shortener API
+// @version 1.0
+// @description API для сокращения и редиректа ссылок.
+// @host localhost:8080
+// @BasePath /
 func main() {
 	// Настройка логгера
 	log := logger.GetLogger();
@@ -37,6 +46,7 @@ func main() {
     })
 
 	router.POST("/shorten", handlers.CreateShortLinkHandler)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/:code", handlers.RedirectHandler)
 
 	log.Info("Запускаем сервер на порту :8080")
