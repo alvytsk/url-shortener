@@ -3,11 +3,9 @@ package service
 import (
 	"alvytsk/url-shortener/internal/storage"
 	"alvytsk/url-shortener/pkg/logger"
-	"context"
-	"crypto/sha1"
-	"encoding/base64"
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
-	"strings"
 
 	"gorm.io/gorm"
 )
@@ -36,8 +34,7 @@ func (s *UrlService) CreateShortLink(originalURL string) (*storage.Url, error) {
         return existingLink, nil
     }
 
-    shortCode := generateShortCode(originalURL)
-
+    shortCode := generateShortCode(originalURL, 8)
     link := &storage.Url{
         OriginalURL: originalURL,
         ShortCode:   shortCode,
@@ -53,16 +50,16 @@ func (s *UrlService) CreateShortLink(originalURL string) (*storage.Url, error) {
 
 // GetOriginalLink возвращает оригинальную ссылку по коду
 func (s *UrlService) GetOriginalLink(shortCode string) (*storage.Url, error) {
-    log := logger.GetLogger()
-    ctx := context.Background()
-    redisClient := storage.GetRedis()
+    // log := logger.GetLogger()
+    // ctx := context.Background()
+    // redisClient := storage.GetRedis()
 
     // Проверка в Redis
-	cachedURL, err := redisClient.Get(ctx, shortCode).Result()
-	if err == nil {
-		log.Info("Получено из Redis cache")
-		return &storage.Url{OriginalURL: cachedURL, ShortCode: shortCode}, nil
-	}
+	// cachedURL, err := redisClient.Get(ctx, shortCode).Result()
+	// if err == nil {
+	// 	log.Info("Получено из Redis cache")
+	// 	return &storage.Url{OriginalURL: cachedURL, ShortCode: shortCode}, nil
+	// }
     
     link := &storage.Url{}
     result := s.db.Where("short_code = ?", shortCode).First(link)
@@ -73,9 +70,11 @@ func (s *UrlService) GetOriginalLink(shortCode string) (*storage.Url, error) {
 }
 
 // generateShortCode генерирует короткий код ссылки
-func generateShortCode(url string) string {
-    hasher := sha1.New()
-    hasher.Write([]byte(url))
-    sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
-    return strings.TrimRight(sha[:8], "=") // 8 символов короткого кода
+func generateShortCode(url string, length int) string {
+    hash := md5.Sum([]byte(url))
+    fullHash := hex.EncodeToString(hash[:])
+    if length > len(fullHash) {
+        length = len(fullHash)
+    }
+    return fullHash[:length]
 }

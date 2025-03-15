@@ -42,6 +42,8 @@ func CreateShortLinkHandler(c *gin.Context) {
 
     svc := service.NewUrlService()
     link, err := svc.CreateShortLink(req.URL)
+
+    log.Info("Создана короткая ссылка: ", link)
     if err != nil {
         log.Error("Ошибка создания ссылки: ", err)
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось создать ссылку"})
